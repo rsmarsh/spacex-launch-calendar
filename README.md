@@ -23,6 +23,17 @@ Other earlier projects past which make use of public and private APIs:
 
 
 ### Best approach
+Before the first line of code is written, This section establishes guidelines for what the project must contain to be considered feature complete. The technology stack used is considered.
 
+Required Features: 
+ - Calendar view of the current year
+ - Area to highlight the time/days until the next launch
+ - Minimal view of a launch showing most important info
+ - Area to display info for a selected launch
+
+Tech Requirements:
+ - Browser friendly (ES5, only using compatible Grid/Flex features).
+ - Responsive layout for different devices.
+ - No third-party frameworks, vanilla JS will be required to create a templating feature.
 ### Future improvements
 - TBC after completion
