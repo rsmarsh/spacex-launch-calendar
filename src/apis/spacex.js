@@ -6,7 +6,8 @@
  */
 function SpaceXApi() {
     this.endpoints = {
-        launches: 'https://api.spacexdata.com/v3/launches'
+        launches: 'https://api.spacexdata.com/v3/launches',
+        nextLaunch: 'https://api.spacexdata.com/v3/launches/next'
     }
     this.activeXHR = null;
     this.dataCache = {};
@@ -21,13 +22,23 @@ SpaceXApi.prototype.getLaunches = function(year) {
     this.requestData("launches", params)  
 };
 
+SpaceXApi.prototype.getNextLaunch = function(year) {
+    this.requestData("nextLaunch", {}, window.startLaunchCountdown, true);
+};
+
+
+
 /**
  * Fire off a new request to the API
  *
  */
-SpaceXApi.prototype.requestData = function(endpoint, params) {
+SpaceXApi.prototype.requestData = function(endpoint, params, customCallback, conflictFree) {
 
-    
+    var callback = SpaceXApi.prototype.processResponse.bind(this);
+    if (typeof customCallback === 'function') {
+        callback = customCallback;
+    }
+
     if (typeof this.endpoints[endpoint] === 'undefined') {
         console.warn('Invalid endpoint requested: '+endpoint);
         return;
@@ -42,7 +53,7 @@ SpaceXApi.prototype.requestData = function(endpoint, params) {
 
 
     // if there is already an xhr in progress, abort it before continuing
-    if (this.activeXHR && this.activeXHR.readyState !== 4) {
+    if (!conflictFree && this.activeXHR && this.activeXHR.readyState !== 4) {
         this.activeXHR.abort();
         delete this.activeXHR;
     }
@@ -50,8 +61,8 @@ SpaceXApi.prototype.requestData = function(endpoint, params) {
     var requestUrl = this.endpoints[endpoint]+queryParams;
 
     // use memoization to prevent making identical API requests more than once
-    if (this.dataCache[requestUrl]) {
-        SpaceXApi.prototype.processResponse.call(this, this.dataCache[requestUrl]);
+    if (!conflictFree && this.dataCache[requestUrl]) {
+        callback(this.dataCache[requestUrl]);
         return;
     }
 
@@ -63,7 +74,7 @@ SpaceXApi.prototype.requestData = function(endpoint, params) {
             return;
         }
         this.dataCache[requestUrl] = xhr.responseText;
-        SpaceXApi.prototype.processResponse.call(this, xhr.responseText);
+        callback(xhr.responseText);
     }.bind(this)
 
     xhr.open('GET', this.endpoints[endpoint]+queryParams);
