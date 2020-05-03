@@ -5,3 +5,8 @@ body {
 h1, h2, h3, h4, h5, h6, p, span {
     color: rgb(240, 240, 240);
 }
+
+/* Calendar */
+.month-calendar .template-row {
+    display: none;
+}
