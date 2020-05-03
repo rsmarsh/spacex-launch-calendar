@@ -12,6 +12,8 @@ function Calendar(config) {
     this.table = config.tableElement;
     this.prepareTable();
     this.tableBody = this.table.querySelector('tbody');
+
+    this.addEventListeners();
 };
 
 Calendar.prototype.prepareTable = function() {
@@ -24,6 +26,20 @@ Calendar.prototype.prepareTable = function() {
     this.table.appendChild(document.createElement('tbody'));
     this.createDayCells();
     
+    
+};
+
+Calendar.prototype.addEventListeners = function() {
+    var prevBtn = document.querySelector('.calendar-header .prev-btn');
+    var nextBtn = document.querySelector('.calendar-header .next-btn');
+
+    prevBtn.addEventListener('click', function(){
+        this.updateCalendarMonth(this.monthDisplayed-1);
+    }.bind(this));
+
+    nextBtn.addEventListener('click', function(){
+        this.updateCalendarMonth(this.monthDisplayed+1);
+    }.bind(this));
     
 };
 
@@ -88,29 +104,42 @@ Calendar.prototype.createDayCells = function() {
 * 
 * @param {Number|String} [month] - the month to display (zero indexed). if undefined uses current month
 */
-Calendar.prototype.updateCalendarMonth = function(month, year) {
+Calendar.prototype.updateCalendarMonth = function(month) {
 
     this.tableBody.innerHTML = "";
     this.createDayCells();
 
-    if (isNaN(month) || month < 0 || month >= 12 ) {
+    if (isNaN(month)) {
         month = new Date().getMonth();
     }
 
-    if (isNaN(year) ) {
-        year = new Date().getFullYear();
+    if (isNaN(this.yearDisplayed) ) {
+        this.yearDisplayed = new Date().getFullYear();
     }
 
-    
+    if (month < 0) {
+        month+=12;
+        this.yearDisplayed-=1;
+    }
+
+    if (month >= 12) {
+        month-=12;
+        this.yearDisplayed+=1
+    }
+
+ 
+    // so the next/previous arrows can work, keep track of the latest month being displayed
+    this.monthDisplayed = month;
     
     // capture what the users local date is so today's date can be highlighted
     var currentDate = new Date();
+    var currentYear = currentDate.getFullYear();
     var currentMonth = currentDate.getMonth();
     var currentDay = currentDate.getDate();
 
     // work out what the month to be displayed is and the details of its days
-    var monthToDisplay = new Date(year, month);
-    var monthStartDay = new Date(year, month, 1).getDay()-1; // +1 because getDay() works on Sunday -> Saturday weeks
+    var monthToDisplay = new Date(this.yearDisplayed, this.monthDisplayed);
+    var monthStartDay = new Date(this.yearDisplayed, this.monthDisplayed, 1).getDay()-1; // +1 because getDay() works on Sunday -> Saturday weeks
     // wrap around when a month starts on a Sunday
     if (monthStartDay === -1) {
         monthStartDay = 6;
@@ -132,10 +161,10 @@ Calendar.prototype.updateCalendarMonth = function(month, year) {
     ][monthToDisplay.getMonth()];
 
     // update the calendar heading with month/year label
-    document.querySelector('.calendar-area .month-displayed').textContent = monthLabel;
+    document.querySelector('.calendar-area .month-displayed').textContent = monthLabel + ' ' + this.yearDisplayed ;
 
     // find the total days in this month by setting it to the next month, and use 0 to get the day before
-    var monthLength = new Date(year, month+1, 0).getDate();
+    var monthLength = new Date(this.yearDisplayed, this.monthDisplayed+1, 0).getDate();
 
     var dayIndex = 0;
     var dayOfMonth = 1;
@@ -147,7 +176,14 @@ Calendar.prototype.updateCalendarMonth = function(month, year) {
         if (dayIndex >= monthStartDay && dayOfMonth <= monthLength) {
             dayCell.textContent = dayOfMonth;
             dayCell.classList.add('month-day-'+dayIndex);
+            
+            if (this.monthDisplayed === currentMonth && this.yearDisplayed === currentYear && dayOfMonth === currentDay) {
+                dayCell.classList.add('today');
+            }
+
             dayOfMonth+=1;
+
+            
         } else {
             
         }
@@ -156,11 +192,9 @@ Calendar.prototype.updateCalendarMonth = function(month, year) {
 
     }
 
-   // TODO: if this day matches today's date, add a highlight class
+    // TODO: check if this day has an event, add info if so (this may be done via a second function)
 
-   // TODO: check if this day has an event, add info if so (this may be done via a second function)
-
-   // TODO: check how many empty cells are below/after this month and add in the correct numbers
+    // TODO: check how many empty cells are below/after this month and add in the correct numbers
 };
 
 Calendar.prototype.getDayCellByIndex = function(index) {
@@ -174,3 +208,4 @@ Calendar.prototype.addEvents = function(eventList) {
 Calendar.prototype.addEvent = function(event) {
     console.log("add event:", event);
 };
+
