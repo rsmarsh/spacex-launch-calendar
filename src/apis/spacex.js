@@ -78,6 +78,9 @@ SpaceXApi.prototype.requestData = function(endpoint, params) {
  * @param {Object} res - API's response in the exact state it was received
  */
 SpaceXApi.prototype.processResponse = function(res) {
+    if (res === "") {
+        return;
+    }
     var data = JSON.parse(res);
     console.log(data);
 
