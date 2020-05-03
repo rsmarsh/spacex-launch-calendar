@@ -4,8 +4,73 @@
  * @param {Object} config - any properties found witin this object will overwrite defaults
  */
 function Calendar(config) {
+    if (!config.tableElement) {
+        console.error("Calendar initialised without a target HTML element.");
+        return;
+    }
+    this.table = config.tableElement;
+
     
-}
+    this.prepareTable();
+};
+
+Calendar.prototype.prepareTable = function() {
+
+    // clear any existing data from the table
+    this.table.innerHTML = "";
+    
+    this.addDayHeadings();
+
+    this.table.appendChild(document.createElement('tbody'));
+    this.createDayCells();
+    
+};
+
+/**
+ * Populates the thead with days of the week
+ *
+ */
+Calendar.prototype.addDayHeadings = function() {
+
+    var days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    var thead = document.createElement('thead'); 
+    thead.innerHTML = "";
+    thead.classList.add('weekday-headers');
+
+    days.forEach(function(day){
+        var heading = document.createElement('th');
+        heading.textContent = day;
+        thead.appendChild(heading);
+    });
+
+    this.table.appendChild(thead);
+
+};
+
+Calendar.prototype.createDayCells = function() {
+    var weeksToDisplay = 6;
+    var tbody = this.table.querySelector('tbody');
+
+    // for each week to display, create a row and fill it with 7 weekday cells
+    for (var weekNum = 1; weekNum <= weeksToDisplay; weekNum++) {
+        var row = document.createElement('tr');
+        row.classList.add('week-row');
+        
+        for (var dayNum = 1; dayNum <= 7; dayNum++) {
+            var dayCell = document.createElement('td');
+            dayCell.textContent = dayNum;
+            
+            dayCell.classList.add('day'+dayNum);
+            if (dayNum > 5) {
+                dayCell.classList.add('weekend-cell');
+            }
+            row.appendChild(dayCell);
+        }
+
+        tbody.appendChild(row);
+    }
+
+};
 
 /**
 * Updates the current month being displayed within the calendar
