@@ -50,3 +50,10 @@ h1, h2, h3, h4, h5, h6, p, span {
     text-align: center;
     border: 1px solid rgba(255, 255, 255, 0.315);
 }
+
+.month-calendar .launch-button {
+    display: block;
+    position: relative;
+    bottom: -10px;
+    width: 100%;
+}
