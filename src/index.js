@@ -6,7 +6,10 @@ var calendar = new Calendar({
         eventClicked: eventClicked
     }
 });
+
+// These can be triggered immediately as all dependenies are ready on load
 calendar.updateCalendarMonth();
+spaceX.getNextLaunch();
 
 function calendarDateChanged(month, year) {
     spaceX.getLaunches(year);
@@ -32,9 +35,30 @@ function updateSelectedLaunch(eventData) {
     selectedLaunch.style.display = "block";
 };
 
+var nextLaunch;
+function startLaunchCountdown(launchInfo) {
+    var launchInfo = JSON.parse(launchInfo);
+    nextLaunch = launchInfo.launch_date_local;
+    updateLaunchCountdown();
+};
 
+var launchTimer = document.querySelector('.time-to-launch');
 function updateLaunchCountdown() {
+    // if this function runs before the launch data is available, continue the 1s loop but don't do anything 
+    if (nextLaunch) {
+        var currentDate = new Date();
+        var launchDate = new Date(nextLaunch);
 
+        // convert to seconds between the launch
+        var timeUntilLaunch = ((launchDate.getTime() - currentDate.getTime())/1000).toFixed(0);
+        var daysTillLaunch = (timeUntilLaunch/60/60/24).toFixed(0);
+
+        launchTimer.querySelector('.days').textContent = daysTillLaunch+ ' days';
+        launchTimer.querySelector('.seconds').textContent = "T-minus "+ timeUntilLaunch + " seconds";
+        
+    }
+
+  setTimeout(updateLaunchCountdown, 1000);  
 };
 
 function launchesLoaded(launches) {
