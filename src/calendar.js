@@ -9,6 +9,7 @@ function Calendar(config) {
         return;
     }
 
+    this.callbacks = config.callbacks;
     this.table = config.tableElement;
     this.prepareTable();
     this.tableBody = this.table.querySelector('tbody');
@@ -83,11 +84,12 @@ Calendar.prototype.createDayCells = function() {
         for (var dayNum = 1; dayNum <= 7; dayNum++) {
             var dayCell = document.createElement('td');
             
-            dayCell.classList.add('index-'+dayIndex);
+            dayCell.classList.add('index-'+(dayIndex-1));
             dayCell.classList.add('day-'+dayNum);
             if (dayNum > 5) {
                 dayCell.classList.add('weekend-cell');
             }
+
             row.appendChild(dayCell);
 
             dayIndex+=1;
@@ -126,10 +128,10 @@ Calendar.prototype.updateCalendarMonth = function(month) {
         month-=12;
         this.yearDisplayed+=1
     }
-
  
     // so the next/previous arrows can work, keep track of the latest month being displayed
     this.monthDisplayed = month;
+
     
     // capture what the users local date is so today's date can be highlighted
     var currentDate = new Date();
@@ -144,6 +146,7 @@ Calendar.prototype.updateCalendarMonth = function(month) {
     if (monthStartDay === -1) {
         monthStartDay = 6;
     }
+    this.monthOffset = monthStartDay;
 
     var monthLabel = [
         'January',
@@ -177,6 +180,13 @@ Calendar.prototype.updateCalendarMonth = function(month) {
             dayCell.textContent = dayOfMonth;
             dayCell.classList.add('month-day-'+dayIndex);
             
+            var eventButton = document.createElement('button');
+            eventButton.classList.add('launch-button');
+            eventButton.style.display = "none";
+            eventButton.addEventListener('click', this.callbacks.eventClicked || function(){});
+
+            dayCell.appendChild(eventButton);
+            
             if (this.monthDisplayed === currentMonth && this.yearDisplayed === currentYear && dayOfMonth === currentDay) {
                 dayCell.classList.add('today');
             }
@@ -192,7 +202,10 @@ Calendar.prototype.updateCalendarMonth = function(month) {
 
     }
 
-    // TODO: check if this day has an event, add info if so (this may be done via a second function)
+    // inform the page that a date changes has occured, this allows any API actions to take place
+    if (typeof this.callbacks.dateChanged === 'function') {
+        this.callbacks.dateChanged(this.monthDisplayed, this.yearDisplayed);
+    }
 
     // TODO: check how many empty cells are below/after this month and add in the correct numbers
 };
@@ -206,6 +219,21 @@ Calendar.prototype.addEvents = function(eventList) {
 };
 
 Calendar.prototype.addEvent = function(event) {
-    console.log("add event:", event);
+    var eventDate = new Date(event.date);
+
+    // events only need to be added for the current month being displayed
+    if (eventDate.getMonth() !== this.monthDisplayed) {
+        return;
+    }
+
+    var date = eventDate.getDate();
+    var dayCell = this.getDayCellByIndex(date+this.monthOffset);
+
+    var launchIcon = dayCell.querySelector('.launch-button');
+    launchIcon.textContent = event.icon;
+    launchIcon.style.display = "block";
+    launchIcon.dataset.launchData = JSON.stringify(event);
+
+
 };
 
