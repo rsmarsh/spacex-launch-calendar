@@ -4,7 +4,7 @@ This project is a vanilla zero-dependency SPA, with the aim of populating a cale
 
 
 ## Live Demo
-- Coming soon
+- [Demo page](https://romantic-lamport-8d77ca.netlify.app/) (hosted by Netlify)
 
 
 ## Additional Info
@@ -35,5 +35,11 @@ Tech Requirements:
  - Browser friendly (ES5, only using compatible Grid/Flex features).
  - Responsive layout for different devices.
  - No third-party frameworks, vanilla JS will be required to create a templating feature.
-### Future improvements
-- TBC after completion
+### Future improvements and considerations for future projects
+ - Investigate SpaceX API for known issues such as "Next launch" endpoint returning a date in the past. 
+ - Allow more time for adding JSDoc comments to all functions.
+ - Style improvements on the calendar events.
+ - Map of launch location
+ - Allow more time for the project.
+
+ 
