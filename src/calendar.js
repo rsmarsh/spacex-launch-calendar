@@ -49,7 +49,7 @@ Calendar.prototype.addDayHeadings = function() {
 };
 
 /**
- * Invokes itself once from the constructor function on initialisation
+ * Invokes itself once from the constructor function on initialisation, and to initialise different months
  * This function creates the table body and adds all the empty calendar table td cells
  *
  */
@@ -90,7 +90,8 @@ Calendar.prototype.createDayCells = function() {
 */
 Calendar.prototype.updateCalendarMonth = function(month, year) {
 
-    // this.tableBody.innerHTML = "";
+    this.tableBody.innerHTML = "";
+    this.createDayCells();
 
     if (isNaN(month) || month < 0 || month >= 12 ) {
         month = new Date().getMonth();
@@ -136,19 +137,23 @@ Calendar.prototype.updateCalendarMonth = function(month, year) {
     // find the total days in this month by setting it to the next month, and use 0 to get the day before
     var monthLength = new Date(year, month+1, 0).getDate();
 
-    // iterate through each week, adding the day number labels
-    var dayRows = this.table.querySelectorAll('.week-row');
-
-
-    var dayIndex = monthStartDay;
+    var dayIndex = 0;
     var dayOfMonth = 1;
 
     // add the number of day cells required by this month
-    while (dayIndex < monthLength) {
+    while (dayIndex < 6*7) { // 6 weeks * 7 days
         var dayCell = this.getDayCellByIndex(dayIndex);
-        dayCell.textContent = dayOfMonth;
-        dayOfMonth+=1;
+
+        if (dayIndex >= monthStartDay && dayOfMonth <= monthLength) {
+            dayCell.textContent = dayOfMonth;
+            dayCell.classList.add('month-day-'+dayIndex);
+            dayOfMonth+=1;
+        } else {
+            
+        }
+
         dayIndex+=1;
+
     }
 
    // TODO: if this day matches today's date, add a highlight class
