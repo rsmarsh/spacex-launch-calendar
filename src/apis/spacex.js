@@ -93,7 +93,6 @@ SpaceXApi.prototype.processResponse = function(res) {
         return;
     }
     var data = JSON.parse(res);
-    console.log(data);
 
     if (typeof window.launchesLoaded === "function") {
         launchesLoaded(data);
