@@ -83,8 +83,7 @@ Calendar.prototype.createDayCells = function() {
         
         for (var dayNum = 1; dayNum <= 7; dayNum++) {
             var dayCell = document.createElement('td');
-            
-            dayCell.classList.add('index-'+(dayIndex-1));
+            dayCell.classList.add('index-'+(dayIndex));
             dayCell.classList.add('day-'+dayNum);
             if (dayNum > 5) {
                 dayCell.classList.add('weekend-cell');
@@ -146,7 +145,7 @@ Calendar.prototype.updateCalendarMonth = function(month) {
     if (monthStartDay === -1) {
         monthStartDay = 6;
     }
-    this.monthOffset = monthStartDay;
+    this.monthOffset = monthStartDay-1;
 
     var monthLabel = [
         'January',

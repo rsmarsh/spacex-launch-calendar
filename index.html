@@ -11,10 +11,13 @@
         <h1>SpaceX Launch Calendar</h1>
 
         <div id="header">
-
+            <h3>The next launch is in <span class="time-to-launch"></span></h3>
         </div>
 
         <div id="content">
+
+            
+
             <div class="calendar-area">
                 <div class="calendar-header">
                     <button class="prev-btn"><</button>
@@ -25,10 +28,20 @@
                     <table class="month-calendar"></table>
                 </div>
             </div>
+
+            <div class="launch-info">
+                <h3 class="select-placeholder">Select a launch date from the calendar to view more info</h3>
+                <div class="selected-launch" style="display: none">
+                    <p><strong>Date of launch</strong>: <span class="launch-date"></span></p>
+                    <p><strong>Time of launch</strong>: <span class="launch-time"></span></p>
+                    <p><strong>Rocket</strong>: <span class="rocket-name"></span></p>
+                    <p><strong>Details</strong>: <span class="launch-details"></span></p>
+                </div> 
+            </div>
         </div>
 
         <div id="footer">
-
+            
         </div>
 
         <script src="src/apis/spacex.js"></script>
